@@ -9,9 +9,9 @@
 		<PackageOwners>Anduin</PackageOwners>
 		<AssemblyName>Anduin.QRCoder</AssemblyName>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/codebude/QRCoder</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/Anduin2017/Anduin.QRCoder</PackageProjectUrl>
 		<PackageTags>c# csharp qr qrcoder qrcode qr-generator qr-code-generator</PackageTags>
-		<RepositoryUrl>https://github.com/codebude/QRCoder.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/Anduin2017/Anduin.QRCoder</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes.</Description>
 	</PropertyGroup>
