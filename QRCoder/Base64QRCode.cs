@@ -94,9 +94,8 @@ namespace Anduin.QRCoder
 
     }
 
-#if NET6_0_WINDOWS
+
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class Base64QRCodeHelper
     {
         public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, ImageType imgType = ImageType.Png)

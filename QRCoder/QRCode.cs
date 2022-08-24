@@ -125,9 +125,7 @@ namespace Anduin.QRCoder
         }
     }
 
-#if NET6_0_WINDOWS
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class QRCodeHelper
     {
         public static Bitmap GetQRCode(string plainText, int pixelsPerModule, Color darkColor, Color lightColor, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, Bitmap icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true)
