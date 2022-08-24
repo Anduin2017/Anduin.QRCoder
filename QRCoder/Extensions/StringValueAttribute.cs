@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
-namespace QRCoder.Extensions
+namespace Anduin.QRCoder.Extensions
 {
     /// <summary>
     /// Used to represent a string value for a value in an enum
@@ -27,7 +23,7 @@ namespace QRCoder.Extensions
         /// <param name="value"></param>
         public StringValueAttribute(string value)
         {
-            this.StringValue = value;
+            StringValue = value;
         }        
     }
 

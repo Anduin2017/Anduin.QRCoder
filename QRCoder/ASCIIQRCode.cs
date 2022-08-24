@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static QRCoder.QRCodeGenerator;
+using static Anduin.QRCoder.QRCodeGenerator;
 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
     public class AsciiQRCode : AbstractQRCode, IDisposable
     {

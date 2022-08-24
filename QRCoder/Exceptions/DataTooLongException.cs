@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QRCoder.Exceptions
+namespace Anduin.QRCoder.Exceptions
 {
     public class DataTooLongException : Exception
     {

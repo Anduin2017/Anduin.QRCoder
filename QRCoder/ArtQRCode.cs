@@ -1,17 +1,14 @@
-#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
 
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using static QRCoder.ArtQRCode;
-using static QRCoder.QRCodeGenerator;
+using static Anduin.QRCoder.ArtQRCode;
+using static Anduin.QRCoder.QRCodeGenerator;
 
 // pull request raised to extend library used. 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
-#if NET6_0_WINDOWS
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public class ArtQRCode : AbstractQRCode, IDisposable
     {
         /// <summary>
@@ -32,7 +29,7 @@ namespace QRCoder
         /// <returns>QRCode graphic as bitmap</returns>
         public Bitmap GetGraphic(int pixelsPerModule)
         {
-            return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, Color.Transparent);
+            return GetGraphic(pixelsPerModule, Color.Black, Color.White, Color.Transparent);
         }
 
         /// <summary>
@@ -42,7 +39,7 @@ namespace QRCoder
         /// <returns>QRCode graphic as bitmap</returns>
         public Bitmap GetGraphic(Bitmap backgroundImage = null)
         {
-            return this.GetGraphic(10, Color.Black, Color.White, Color.Transparent, backgroundImage: backgroundImage);
+            return GetGraphic(10, Color.Black, Color.White, Color.Transparent, backgroundImage: backgroundImage);
         }
 
         /// <summary>
@@ -65,7 +62,7 @@ namespace QRCoder
         {
             if (pixelSizeFactor > 1)
                 throw new Exception("The parameter pixelSize must be between 0 and 1. (0-100%)");
-            int pixelSize = (int)Math.Min(pixelsPerModule, Math.Floor(pixelsPerModule / pixelSizeFactor));
+            var pixelSize = (int)Math.Min(pixelsPerModule, Math.Floor(pixelsPerModule / pixelSizeFactor));
 
             var numModules = QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8);
             var offset = (drawQuietZones ? 0 : 4);
@@ -104,7 +101,7 @@ namespace QRCoder
                             {
                                 var rectangleF = new Rectangle(x * pixelsPerModule, y * pixelsPerModule, pixelsPerModule, pixelsPerModule);
 
-                                var pixelIsDark = this.QrCodeData.ModuleMatrix[offset + y][offset + x];
+                                var pixelIsDark = QrCodeData.ModuleMatrix[offset + y][offset + x];
                                 var solidBrush = pixelIsDark ? darkBrush : lightBrush;
                                 var pixelImage = pixelIsDark ? darkModulePixel : lightModulePixel;
 
@@ -212,7 +209,7 @@ namespace QRCoder
         {
             if (image == null) return null;
 
-            float scale = Math.Min((float)newSize / image.Width, (float)newSize / image.Height);
+            var scale = Math.Min((float)newSize / image.Width, (float)newSize / image.Height);
             var scaledWidth = (int)(image.Width * scale);
             var scaledHeight = (int)(image.Height * scale);
             var offsetX = (newSize - scaledWidth) / 2;
@@ -222,7 +219,7 @@ namespace QRCoder
 
             var bm = new Bitmap(newSize, newSize);
 
-            using (Graphics graphics = Graphics.FromImage(bm))
+            using (var graphics = Graphics.FromImage(bm))
             {
                 using (var brush = new SolidBrush(Color.Transparent))
                 {
@@ -257,9 +254,6 @@ namespace QRCoder
         }
     }
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class ArtQRCodeHelper
     {
         /// <summary>
@@ -294,5 +288,3 @@ namespace QRCoder
         }
     }
 }
-
-#endif

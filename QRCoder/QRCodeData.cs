@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
-    using QRCoder.Framework4._0Methods;
+    using Framework4._0Methods;
     using System;
     using System.IO;
     using System.IO.Compression;
@@ -15,17 +14,13 @@ namespace QRCoder
 
         public QRCodeData(int version)
         {
-            this.Version = version;
+            Version = version;
             var size = ModulesPerSideFromVersion(version);
-            this.ModuleMatrix = new List<BitArray>();
+            ModuleMatrix = new List<BitArray>();
             for (var i = 0; i < size; i++)
-                this.ModuleMatrix.Add(new BitArray(size));
+                ModuleMatrix.Add(new BitArray(size));
         }
-#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0
-        public QRCodeData(string pathToRawData, Compression compressMode) : this(File.ReadAllBytes(pathToRawData), compressMode)
-        {
-        }
-#endif
+
         public QRCodeData(byte[] rawData, Compression compressMode)
         {
             var bytes = new List<byte>(rawData);
@@ -66,27 +61,27 @@ namespace QRCoder
             //Set QR code version
             var sideLen = (int)bytes[4];
             bytes.RemoveRange(0, 5);
-            this.Version = (sideLen - 21 - 8) / 4 + 1;
+            Version = (sideLen - 21 - 8) / 4 + 1;
 
             //Unpack
             var modules = new Queue<bool>(8 * bytes.Count);
             foreach (var b in bytes)
             {
                 var bArr = new BitArray(new byte[] { b });
-                for (int i = 7; i >= 0; i--)
+                for (var i = 7; i >= 0; i--)
                 {
                     modules.Enqueue((b & (1 << i)) != 0);
                 }
             }
 
             //Build module matrix
-            this.ModuleMatrix = new List<BitArray>(sideLen);
-            for (int y = 0; y < sideLen; y++)
+            ModuleMatrix = new List<BitArray>(sideLen);
+            for (var y = 0; y < sideLen; y++)
             {
-                this.ModuleMatrix.Add(new BitArray(sideLen));
-                for (int x = 0; x < sideLen; x++)
+                ModuleMatrix.Add(new BitArray(sideLen));
+                for (var x = 0; x < sideLen; x++)
                 {
-                    this.ModuleMatrix[y][x] = modules.Dequeue();
+                    ModuleMatrix[y][x] = modules.Dequeue();
                 }
             }
 
@@ -111,7 +106,7 @@ namespace QRCoder
                     dataQueue.Enqueue((bool)module ? 1 : 0);
                 }
             }
-            for (int i = 0; i < 8 - (ModuleMatrix.Count * ModuleMatrix.Count) % 8; i++)
+            for (var i = 0; i < 8 - (ModuleMatrix.Count * ModuleMatrix.Count) % 8; i++)
             {
                 dataQueue.Enqueue(0);
             }
@@ -120,7 +115,7 @@ namespace QRCoder
             while (dataQueue.Count > 0)
             {
                 byte b = 0;
-                for (int i = 7; i >= 0; i--)
+                for (var i = 7; i >= 0; i--)
                 {
                     b += (byte)(dataQueue.Dequeue() << i);
                 }
@@ -144,7 +139,7 @@ namespace QRCoder
             {
                 using (var output = new MemoryStream())
                 {
-                    using (GZipStream gzipStream = new GZipStream(output, CompressionMode.Compress, true))
+                    using (var gzipStream = new GZipStream(output, CompressionMode.Compress, true))
                     {
                         gzipStream.Write(rawData, 0, rawData.Length);
                     }
@@ -153,13 +148,6 @@ namespace QRCoder
             }
             return rawData;
         }
-
-#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0
-        public void SaveRawData(string filePath, Compression compressMode)
-        {
-            File.WriteAllBytes(filePath, GetRawData(compressMode));
-        }
-#endif
 
         public int Version { get; private set; }
 
@@ -170,8 +158,8 @@ namespace QRCoder
 
         public void Dispose()
         {
-            this.ModuleMatrix = null;
-            this.Version = 0;
+            ModuleMatrix = null;
+            Version = 0;
 
         }
 

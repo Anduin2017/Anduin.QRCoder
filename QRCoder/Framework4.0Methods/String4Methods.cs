@@ -1,6 +1,6 @@
 using System;
 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
     internal static class String40Methods
     {
@@ -14,7 +14,7 @@ namespace QRCoder
         {
             if (value == null) return true;
 
-            for (int i = 0; i < value.Length; i++)
+            for (var i = 0; i < value.Length; i++)
             {
                 if (!Char.IsWhiteSpace(value[i])) return false;
             }
@@ -24,8 +24,8 @@ namespace QRCoder
 
         public static string ReverseString(string str)
         {
-            char[] chars = str.ToCharArray();
-            char[] result = new char[chars.Length];
+            var chars = str.ToCharArray();
+            var result = new char[chars.Length];
             for (int i = 0, j = str.Length - 1; i < str.Length; i++, j--)
             {
                 result[i] = chars[j];

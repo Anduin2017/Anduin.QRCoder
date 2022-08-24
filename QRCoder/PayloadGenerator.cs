@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 #endif
 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
     public static class PayloadGenerator
     {
@@ -40,13 +40,13 @@ namespace QRCoder
                 this.password = EscapeInput(password);
                 this.password = escapeHexStrings && isHexStyle(this.password) ? "\"" + this.password + "\"" : this.password;
                 this.authenticationMode = authenticationMode.ToString();
-                this.isHiddenSsid = isHiddenSSID;
+                isHiddenSsid = isHiddenSSID;
             }
 
             public override string ToString()
             {
                 return
-                    $"WIFI:T:{this.authenticationMode};S:{this.ssid};P:{this.password};{(this.isHiddenSsid ? "H:true" : string.Empty)};";
+                    $"WIFI:T:{authenticationMode};S:{ssid};P:{password};{(isHiddenSsid ? "H:true" : string.Empty)};";
             }
 
             public enum Authentication
@@ -81,22 +81,22 @@ namespace QRCoder
             public override string ToString()
             {
                 var returnVal = string.Empty;
-                switch (this.encoding)
+                switch (encoding)
                 {
                     case MailEncoding.MAILTO:
                         var parts = new List<string>();
-                        if (!string.IsNullOrEmpty(this.subject))
-                            parts.Add("subject=" + Uri.EscapeDataString(this.subject));
-                        if (!string.IsNullOrEmpty(this.message))
-                            parts.Add("body=" + Uri.EscapeDataString(this.message));
+                        if (!string.IsNullOrEmpty(subject))
+                            parts.Add("subject=" + Uri.EscapeDataString(subject));
+                        if (!string.IsNullOrEmpty(message))
+                            parts.Add("body=" + Uri.EscapeDataString(message));
                         var queryString = parts.Any() ? $"?{string.Join("&", parts.ToArray())}" : "";
-                        returnVal = $"mailto:{this.mailReceiver}{queryString}";
+                        returnVal = $"mailto:{mailReceiver}{queryString}";
                         break;
                     case MailEncoding.MATMSG:
-                        returnVal = $"MATMSG:TO:{this.mailReceiver};SUB:{EscapeInput(this.subject)};BODY:{EscapeInput(this.message)};;";
+                        returnVal = $"MATMSG:TO:{mailReceiver};SUB:{EscapeInput(subject)};BODY:{EscapeInput(message)};;";
                         break;
                     case MailEncoding.SMTP:
-                        returnVal = $"SMTP:{this.mailReceiver}:{EscapeInput(this.subject, true)}:{EscapeInput(this.message, true)}";
+                        returnVal = $"SMTP:{mailReceiver}:{EscapeInput(subject, true)}:{EscapeInput(message, true)}";
                         break;
                 }
                 return returnVal;
@@ -123,7 +123,7 @@ namespace QRCoder
             public SMS(string number, SMSEncoding encoding = SMSEncoding.SMS)
             {
                 this.number = number;
-                this.subject = string.Empty;
+                subject = string.Empty;
                 this.encoding = encoding;
             }
 
@@ -143,22 +143,22 @@ namespace QRCoder
             public override string ToString()
             {
                 var returnVal = string.Empty;
-                switch (this.encoding)
+                switch (encoding)
                 {                    
                     case SMSEncoding.SMS:
                         var queryString = string.Empty;
-                        if (!string.IsNullOrEmpty(this.subject))
-                            queryString = $"?body={Uri.EscapeDataString(this.subject)}";                        
-                        returnVal = $"sms:{this.number}{queryString}";
+                        if (!string.IsNullOrEmpty(subject))
+                            queryString = $"?body={Uri.EscapeDataString(subject)}";                        
+                        returnVal = $"sms:{number}{queryString}";
                         break;
                     case SMSEncoding.SMS_iOS:
                         var queryStringiOS = string.Empty;
-                        if (!string.IsNullOrEmpty(this.subject))
-                            queryStringiOS = $";body={Uri.EscapeDataString(this.subject)}";
-                        returnVal = $"sms:{this.number}{queryStringiOS}";
+                        if (!string.IsNullOrEmpty(subject))
+                            queryStringiOS = $";body={Uri.EscapeDataString(subject)}";
+                        returnVal = $"sms:{number}{queryStringiOS}";
                         break;
                     case SMSEncoding.SMSTO:
-                        returnVal = $"SMSTO:{this.number}:{this.subject}";
+                        returnVal = $"SMSTO:{number}:{subject}";
                         break;                    
                 }
                 return returnVal;
@@ -185,7 +185,7 @@ namespace QRCoder
             public MMS(string number, MMSEncoding encoding = MMSEncoding.MMS)
             {
                 this.number = number;
-                this.subject = string.Empty;
+                subject = string.Empty;
                 this.encoding = encoding;
             }
 
@@ -205,19 +205,19 @@ namespace QRCoder
             public override string ToString()
             {
                 var returnVal = string.Empty;                
-                switch (this.encoding)
+                switch (encoding)
                 {                     
                     case MMSEncoding.MMSTO:
                         var queryStringMmsTo = string.Empty;
-                        if (!string.IsNullOrEmpty(this.subject))
-                            queryStringMmsTo = $"?subject={Uri.EscapeDataString(this.subject)}";
-                        returnVal = $"mmsto:{this.number}{queryStringMmsTo}";
+                        if (!string.IsNullOrEmpty(subject))
+                            queryStringMmsTo = $"?subject={Uri.EscapeDataString(subject)}";
+                        returnVal = $"mmsto:{number}{queryStringMmsTo}";
                         break;
                     case MMSEncoding.MMS:
                         var queryStringMms = string.Empty;
-                        if (!string.IsNullOrEmpty(this.subject))
-                            queryStringMms = $"?body={Uri.EscapeDataString(this.subject)}";
-                        returnVal = $"mms:{this.number}{queryStringMms}";
+                        if (!string.IsNullOrEmpty(subject))
+                            queryStringMms = $"?body={Uri.EscapeDataString(subject)}";
+                        returnVal = $"mms:{number}{queryStringMms}";
                         break;
                 }
                 return returnVal;
@@ -250,12 +250,12 @@ namespace QRCoder
 
             public override string ToString()
             {
-                switch (this.encoding)
+                switch (encoding)
                 {
                     case GeolocationEncoding.GEO:
-                        return $"geo:{this.latitude},{this.longitude}";
+                        return $"geo:{latitude},{longitude}";
                     case GeolocationEncoding.GoogleMaps:
-                        return $"http://maps.google.com/maps?q={this.latitude},{this.longitude}";
+                        return $"http://maps.google.com/maps?q={latitude},{longitude}";
                     default:
                         return "geo:";
                 }
@@ -283,7 +283,7 @@ namespace QRCoder
 
             public override string ToString()
             {
-                return $"tel:{this.number}";
+                return $"tel:{number}";
             }
         }
 
@@ -302,7 +302,7 @@ namespace QRCoder
 
             public override string ToString()
             {
-                return $"skype:{this.skypeUsername}?call";
+                return $"skype:{skypeUsername}?call";
             }
         }
 
@@ -321,7 +321,7 @@ namespace QRCoder
 
             public override string ToString()
             {
-                return (!this.url.StartsWith("http") ? "http://" + this.url : this.url);
+                return (!url.StartsWith("http") ? "http://" + url : url);
             }
         }
 
@@ -350,13 +350,13 @@ namespace QRCoder
             /// <param name="message">The message</param>
             public WhatsAppMessage(string message)
             {
-                this.number = string.Empty;
+                number = string.Empty;
                 this.message = message;
             }
 
             public override string ToString()
             {
-                var cleanedPhone = Regex.Replace(this.number, @"^[0+]+|[ ()-]", string.Empty);
+                var cleanedPhone = Regex.Replace(number, @"^[0+]+|[ ()-]", string.Empty);
                 return ($"https://wa.me/{cleanedPhone}?text={Uri.EscapeDataString(message)}");
             }
         }
@@ -379,7 +379,7 @@ namespace QRCoder
 
             public override string ToString()
             {
-                return $"MEBKM:TITLE:{this.title};URL:{this.url};;";
+                return $"MEBKM:TITLE:{title};URL:{url};;";
             }
         }
 
@@ -456,7 +456,7 @@ namespace QRCoder
 
             public override string ToString()
             {
-                string payload = string.Empty;
+                var payload = string.Empty;
                 if (outputType == ContactOutputType.MeCard)
                 {
                     payload += "MECARD+\r\n";
@@ -480,7 +480,7 @@ namespace QRCoder
                         payload += $"NOTE:{note}\r\n";
                     if (birthday != null)
                         payload += $"BDAY:{((DateTime)birthday).ToString("yyyyMMdd")}\r\n";
-                    string addressString = string.Empty;
+                    var addressString = string.Empty;
                     if(addressOrder == AddressOrder.Default)
                     {
                         addressString = $"ADR:,,{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")},{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")},{(!string.IsNullOrEmpty(city) ? city : "")},{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")},{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
@@ -561,7 +561,7 @@ namespace QRCoder
                         payload += "TYPE=HOME,PREF:";
                     else
                         payload += "TYPE=home,pref:";
-                    string addressString = string.Empty;
+                    var addressString = string.Empty;
                     if(addressOrder == AddressOrder.Default)
                     {
                         addressString = $";;{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")};{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")};{(!string.IsNullOrEmpty(city) ? city : "")};{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")};{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
@@ -769,7 +769,7 @@ namespace QRCoder
                         throw new SwissQrCodeAdditionalInformationException("Unstructured message and bill information must be shorter than 141 chars in total/combined.");
                     this.unstructuredMessage = unstructuredMessage;
                     this.billInformation = billInformation;
-                    this.trailer = "EPD";
+                    trailer = "EPD";
                 }
 
                 public string UnstructureMessage
@@ -988,7 +988,7 @@ namespace QRCoder
                     //Pattern extracted from https://qr-validation.iso-payments.ch as explained in https://github.com/codebude/QRCoder/issues/97
                     var charsetPattern = @"^([a-zA-Z0-9\.,;:'\ \+\-/\(\)?\*\[\]\{\}\\`´~ ]|[!""#%&<>÷=@_$£]|[àáâäçèéêëìíîïñòóôöùúûüýßÀÁÂÄÇÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÑ])*$";
 
-                    this.adrType = addressType;
+                    adrType = addressType;
 
                     if (string.IsNullOrEmpty(name))
                         throw new SwissQrCodeContactException("Name must not be empty.");
@@ -998,7 +998,7 @@ namespace QRCoder
                         throw new SwissQrCodeContactException($"Name must match the following pattern as defined in pain.001: {charsetPattern}");
                     this.name = name;
 
-                    if (AddressType.StructuredAddress == this.adrType)
+                    if (AddressType.StructuredAddress == adrType)
                     {
                         if (!string.IsNullOrEmpty(streetOrAddressline1) && (streetOrAddressline1.Length > 70))
                             throw new SwissQrCodeContactException("Street must be shorter than 71 chars.");
@@ -1027,7 +1027,7 @@ namespace QRCoder
                         this.houseNumberOrAddressline2 = houseNumberOrAddressline2;
                     }
 
-                    if (AddressType.StructuredAddress == this.adrType) {
+                    if (AddressType.StructuredAddress == adrType) {
                         if (string.IsNullOrEmpty(zipCode))
                             throw new SwissQrCodeContactException("Zip code must not be empty.");
                         if (zipCode.Length > 16)
@@ -1059,13 +1059,13 @@ namespace QRCoder
 
                 private static HashSet<string> ValidTwoLetterCodes()
                 {
-                    string[] codes = new string[]{ "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CW", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "MK", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SX", "SK", "SI", "SB", "SO", "ZA", "GS", "SS", "ES", "LK", "SD", "SR", "SJ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW", "AX" };
+                    var codes = new string[]{ "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CW", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "MK", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SX", "SK", "SI", "SB", "SO", "ZA", "GS", "SS", "ES", "LK", "SD", "SR", "SJ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW", "AX" };
                     return new HashSet<string>(codes, StringComparer.OrdinalIgnoreCase);
                 }
 
                 public override string ToString()
                 {
-                    string contactData = $"{(AddressType.StructuredAddress == adrType ? "S" : "K")}{br}"; //AdrTp
+                    var contactData = $"{(AddressType.StructuredAddress == adrType ? "S" : "K")}{br}"; //AdrTp
                     contactData += name.Replace("\n", "") + br; //Name
                     contactData += (!string.IsNullOrEmpty(streetOrAddressline1) ? streetOrAddressline1.Replace("\n","") : string.Empty) + br; //StrtNmOrAdrLine1
                     contactData += (!string.IsNullOrEmpty(houseNumberOrAddressline2) ? houseNumberOrAddressline2.Replace("\n", "") : string.Empty) + br; //BldgNbOrAdrLine2
@@ -1891,7 +1891,7 @@ namespace QRCoder
                 this.description = description;
                 this.location = location;
                 this.encoding = encoding;
-                string dtFormat = allDayEvent ? "yyyyMMdd" : "yyyyMMddTHHmmss";
+                var dtFormat = allDayEvent ? "yyyyMMdd" : "yyyyMMddTHHmmss";
                 this.start = start.ToString(dtFormat);
                 this.end = end.ToString(dtFormat);
             }
@@ -1899,14 +1899,14 @@ namespace QRCoder
             public override string ToString()
             {
                 var vEvent = $"BEGIN:VEVENT{Environment.NewLine}";
-                vEvent += $"SUMMARY:{this.subject}{Environment.NewLine}";
-                vEvent += !string.IsNullOrEmpty(this.description) ? $"DESCRIPTION:{this.description}{Environment.NewLine}" : "";
-                vEvent += !string.IsNullOrEmpty(this.location) ? $"LOCATION:{this.location}{Environment.NewLine}" : "";
-                vEvent += $"DTSTART:{this.start}{Environment.NewLine}";
-                vEvent += $"DTEND:{this.end}{Environment.NewLine}";
+                vEvent += $"SUMMARY:{subject}{Environment.NewLine}";
+                vEvent += !string.IsNullOrEmpty(description) ? $"DESCRIPTION:{description}{Environment.NewLine}" : "";
+                vEvent += !string.IsNullOrEmpty(location) ? $"LOCATION:{location}{Environment.NewLine}" : "";
+                vEvent += $"DTSTART:{start}{Environment.NewLine}";
+                vEvent += $"DTEND:{end}{Environment.NewLine}";
                 vEvent += "END:VEVENT";
 
-                if (this.encoding == EventEncoding.iCalComplete)
+                if (encoding == EventEncoding.iCalComplete)
                     vEvent = $@"BEGIN:VCALENDAR{Environment.NewLine}VERSION:2.0{Environment.NewLine}{vEvent}{Environment.NewLine}END:VCALENDAR";
 
                 return vEvent;
@@ -2010,7 +2010,7 @@ namespace QRCoder
                 {
                     throw new Exception("Secret must be a filled out base32 encoded string");
                 }
-                string strippedSecret = Secret.Replace(" ", "");
+                var strippedSecret = Secret.Replace(" ", "");
                 string escapedIssuer = null;
                 string label = null;
 
@@ -2165,7 +2165,7 @@ namespace QRCoder
 
             private string UrlEncode(string i)
             {
-                string j = i;
+                var j = i;
                 foreach (var kv in UrlEncodeTable)
                 {
                     j = j.Replace(kv.Key, kv.Value);
@@ -2183,11 +2183,11 @@ namespace QRCoder
                 this.port = port;
                 this.password = password;
                 this.method = method;
-                this.methodStr = encryptionTexts[method.ToString()];
+                methodStr = encryptionTexts[method.ToString()];
                 this.tag = tag;
 
                 if (parameters != null)
-                    this.parameter =
+                    parameter =
                         string.Join("&",
                         parameters.Select(
                             kv => $"{UrlEncode(kv.Key)}={UrlEncode(kv.Value)}"
@@ -2383,13 +2383,13 @@ namespace QRCoder
 
             private string FormatAmount(double amount)
             {
-                int _amt = (int)Math.Round(amount * 100.0);
+                var _amt = (int)Math.Round(amount * 100.0);
                 return String.Format("{0:00000000000}", _amt);
             }
 
             private int CalculateChecksum()
             {
-                int _cs = 5 + _payerName.Length; //5 = UPNQR constant Length
+                var _cs = 5 + _payerName.Length; //5 = UPNQR constant Length
                 _cs += _payerAddress.Length;
                 _cs += _payerPlace.Length;
                 _cs += _amount.Length;
@@ -2488,7 +2488,7 @@ namespace QRCoder
                 var bytes = ToBytes();
 
 #if !NET35_OR_GREATER && !NETSTANDARD1_3_OR_GREATER
-                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
 #if NETSTANDARD1_3              
                 return Encoding.GetEncoding(cp).GetString(bytes,0,bytes.Length);
@@ -2509,12 +2509,12 @@ namespace QRCoder
                 separator = DetermineSeparator();
 
                 //Create the payload string
-                string ret = $"ST0001" + ((int)characterSet).ToString() + //(separator != "|" ? separator : "") + 
-                    $"{separator}Name={mFields.Name}" +
-                    $"{separator}PersonalAcc={mFields.PersonalAcc}" +
-                    $"{separator}BankName={mFields.BankName}" +
-                    $"{separator}BIC={mFields.BIC}" +
-                    $"{separator}CorrespAcc={mFields.CorrespAcc}";
+                var ret = $"ST0001" + ((int)characterSet).ToString() + //(separator != "|" ? separator : "") + 
+                          $"{separator}Name={mFields.Name}" +
+                          $"{separator}PersonalAcc={mFields.PersonalAcc}" +
+                          $"{separator}BankName={mFields.BankName}" +
+                          $"{separator}BIC={mFields.BIC}" +
+                          $"{separator}CorrespAcc={mFields.CorrespAcc}";
 
                 //Add optional fields, if filled
                 var optionalFieldsList = GetOptionalFieldsAsList();
@@ -2526,8 +2526,8 @@ namespace QRCoder
 #if !NET35_OR_GREATER
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
-                var cp = this.characterSet.ToString().Replace("_", "-");
-                byte[] bytesOut = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(cp), Encoding.UTF8.GetBytes(ret));
+                var cp = characterSet.ToString().Replace("_", "-");
+                var bytesOut = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(cp), Encoding.UTF8.GetBytes(ret));
                 if (bytesOut.Length > 300)
                     throw new RussiaPaymentOrderException($"Data too long. Payload must not exceed 300 bytes, but actually is {bytesOut.Length} bytes long. Remove additional data fields or shorten strings/values.");
                 return bytesOut;
@@ -3044,8 +3044,8 @@ namespace QRCoder
             //Check IBAN checksum
             var checksumValid = false;
             var sum = $"{ibanCleared.Substring(4)}{ibanCleared.Substring(0, 4)}".ToCharArray().Aggregate("", (current, c) => current + (char.IsLetter(c) ? (c - 55).ToString() : c.ToString()));
-            int m = 0;
-            for (int i = 0; i < (int)Math.Ceiling((sum.Length - 2) / 7d); i++){
+            var m = 0;
+            for (var i = 0; i < (int)Math.Ceiling((sum.Length - 2) / 7d); i++){
                 var offset = (i == 0 ? 0 : 2);
                 var start = i * 7 + offset;
                 var n = (i == 0 ? "" : m.ToString()) + sum.Substring(start, Math.Min(9 - offset, sum.Length - start));
@@ -3077,10 +3077,10 @@ namespace QRCoder
 
         private static string ConvertStringToEncoding(string message, string encoding)
         {
-            Encoding iso = Encoding.GetEncoding(encoding);
-            Encoding utf8 = Encoding.UTF8;
-            byte[] utfBytes = utf8.GetBytes(message);
-            byte[] isoBytes = Encoding.Convert(utf8, iso, utfBytes);
+            var iso = Encoding.GetEncoding(encoding);
+            var utf8 = Encoding.UTF8;
+            var utfBytes = utf8.GetBytes(message);
+            var isoBytes = Encoding.Convert(utf8, iso, utfBytes);
             return iso.GetString(isoBytes, 0, isoBytes.Length);
         }
 
@@ -3104,10 +3104,10 @@ namespace QRCoder
         {
 			if (string.IsNullOrEmpty(digits) || digits.Length < 2)
                 return false;
-            int[] mods = new int[] { 0, 9, 4, 6, 8, 2, 7, 1, 3, 5 };
+            var mods = new int[] { 0, 9, 4, 6, 8, 2, 7, 1, 3, 5 };
 
-            int remainder = 0;
-            for (int i = 0; i < digits.Length - 1; i++)
+            var remainder = 0;
+            for (var i = 0; i < digits.Length - 1; i++)
             {
                 var num = Convert.ToInt32(digits[i]) - 48;
                 remainder = mods[(num + remainder) % 10];
@@ -3118,7 +3118,7 @@ namespace QRCoder
 
         private static bool isHexStyle(string inp)
         {
-            return (System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b[0-9a-fA-F]+\b\Z") || System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"));
+            return (Regex.IsMatch(inp, @"\A\b[0-9a-fA-F]+\b\Z") || Regex.IsMatch(inp, @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"));
         }
     }
 }

@@ -1,19 +1,16 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using static QRCoder.QRCodeGenerator;
+using static Anduin.QRCoder.QRCodeGenerator;
 
 /* This renderer is inspired by RemusVasii: https://github.com/codebude/QRCoder/issues/223 */
-namespace QRCoder
+namespace Anduin.QRCoder
 {
 
-#if NET6_0_WINDOWS
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     // ReSharper disable once InconsistentNaming
     public class PdfByteQRCode : AbstractQRCode, IDisposable
     {
@@ -45,8 +42,8 @@ namespace QRCoder
         {
             if (colorString.StartsWith("#"))
                 colorString = colorString.Substring(1);
-            byte[] byteColor = new byte[colorString.Length / 2];
-            for (int i = 0; i < byteColor.Length; i++)
+            var byteColor = new byte[colorString.Length / 2];
+            for (var i = 0; i < byteColor.Length; i++)
                 byteColor[i] = byte.Parse(colorString.Substring(i * 2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             return byteColor;
         }
@@ -213,9 +210,7 @@ namespace QRCoder
         }
     }
 
-#if NET6_0_WINDOWS
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class PdfByteQRCodeHelper
     {
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex,
@@ -240,4 +235,3 @@ namespace QRCoder
         }
     }
 }
-#endif

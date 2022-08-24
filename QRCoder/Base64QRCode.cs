@@ -1,16 +1,13 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using static QRCoder.Base64QRCode;
-using static QRCoder.QRCodeGenerator;
+using static Anduin.QRCoder.Base64QRCode;
+using static Anduin.QRCoder.QRCodeGenerator;
 
-namespace QRCoder
+namespace Anduin.QRCoder
 {
-#if NET6_0_WINDOWS
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public class Base64QRCode : AbstractQRCode, IDisposable
     {
         private QRCode qr;
@@ -27,24 +24,24 @@ namespace QRCoder
         }
 
         public override void SetQRCodeData(QRCodeData data) {
-            this.qr.SetQRCodeData(data);
+            qr.SetQRCodeData(data);
         }
 
         public string GetGraphic(int pixelsPerModule)
         {
-            return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
+            return GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
         }
 
 
         public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
-            return this.GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones, imgType);
+            return GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones, imgType);
         }
 
         public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             var base64 = string.Empty;
-            using (Bitmap bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones))
+            using (var bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones))
             {
                 base64 = BitmapToBase64(bmp, imgType);
             }
@@ -54,7 +51,7 @@ namespace QRCoder
         public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Bitmap icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             var base64 = string.Empty;
-            using (Bitmap bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones))
+            using (var bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones))
             {
                 base64 = BitmapToBase64(bmp, imgType);
             }
@@ -80,7 +77,7 @@ namespace QRCoder
                     iFormat = ImageFormat.Png;
                     break;
             }
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
                 bmp.Save(memoryStream, iFormat);
                 base64 = Convert.ToBase64String(memoryStream.ToArray(), Base64FormattingOptions.None);
@@ -112,4 +109,3 @@ namespace QRCoder
     }
 }
 
-#endif
